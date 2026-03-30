@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Budget Manager</title>
+</head>
+
+<body>  
+
+<h1 style="text-align:center;">Welcome to your budget manager</h1>
+
+<p>Please answer these questions using numbers only.<br>
+If you do not pay for any of these simply enter 0</p>
+
+<form id="budgetForm">
+
+<label for="income">What is your monthly income?</label>
+<input type="number" id="income"><br><br>
+
+<label for="rent">How much is your rent?</label>
+<input type="number" id="rent"><br><br>
+
+<label for="bills">How much do you pay for bills?</label>
+<input type="number" id="bills"><br><br>
+
+<label for="food">How much do you spend on shopping / month (roughly)?</label>
+<input type="number" id="food"><br><br>
+
+<label for="transport">How much do you spend on transport (monthly)?</label>
+<input type="number" id="transport"><br><br>
+
+<label for="ent">How much do you spend on entertainment monthly (roughly)?</label>
+<input type="number" id="ent"><br><br>
+
+<label for="sub">How much do you spend on subscriptions / month?</label>
+<input type="number" id="sub"><br><br>
+
+<label for="extra">Do you have any other expenses? If yes, enter amount / month:</label>
+<input type="number" id="extra"><br><br>
+
+<button type="submit">Submit</button>
+
+</form>
+
+<br>
+
+<h2 id="total"></h2>
+<h2 id="remaining"></h2>
+
+<canvas id="myChart" style="max-width:500px; display:none;"></canvas>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+let chart;
+
+document.getElementById("budgetForm").addEventListener("submit", function(e) {
+    e.preventDefault();
+
+    const values = [
+        Number(income.value) || 0,
+        Number(rent.value) || 0,
+        Number(bills.value) || 0,
+        Number(food.value) || 0,
+        Number(transport.value) || 0,
+        Number(ent.value) || 0,
+        Number(sub.value) || 0,
+        Number(extra.value) || 0
+    ];
+
+    // ---- CALCULATIONS ----
+    const incomeVal = values[0];
+
+    const expenses =
+        values[1] +
+        values[2] +
+        values[3] +
+        values[4] +
+        values[5] +
+        values[6] +
+        values[7];
+
+    const remaining = incomeVal - expenses;
+
+    // ---- DISPLAY RESULTS ----
+    document.getElementById("total").textContent =
+        "Your total monthly expenses: £" + expenses;
+
+    document.getElementById("remaining").textContent =
+        "Money remaining: £" + remaining;
+
+    // ---- SHOW CHART ----
+    document.getElementById("myChart").style.display = "block";
+
+    if (chart) {
+        chart.destroy();
+    }
+
+    chart = new Chart(document.getElementById("myChart"), {
+        type: "bar",
+        data: {
+            labels: ['Income','Rent','Bills','Food','Transport','Ent','Sub','Extra'],
+            datasets: [{
+                data: values
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 3500,
+                    ticks: {
+                        stepSize: 50
+                    }
+                }
+            },
+            plugins: {
+                legend: { display: false },
+                title: {
+                    display: true,
+                    text: "Your Budget Breakdown"
+                }
+            }
+        }
+    });
+});
+</script>
+
+</body>
+</html>
