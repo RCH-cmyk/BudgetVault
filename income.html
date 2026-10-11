@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Security: scripts only from this site + the Chart.js CDN; no plugins, no <base> tricks, no form posts -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src 'self' data:; object-src 'none'; base-uri 'self'; form-action 'none'">
+  <!-- Asks search engines not to list this friends-only tool (delete this line if you want it searchable) -->
+  <meta name="robots" content="noindex">
+  <!-- Colours the browser bar on phones -->
+  <meta name="theme-color" content="#1B2A4A">
+  <title>Income - Budget Vault</title>
+  <!-- Emoji favicon built inline, so there is no extra file and no 404 -->
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E💷%3C/text%3E%3C/svg%3E">
+  <!-- Shared styles (file sits next to this page) -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Navigation bar (same on every page) -->
+  <header class="topbar">
+    <span class="brand">Budget Vault</span>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="income.html" class="active">Income</a>
+      <a href="budget.html">Budget</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <!-- Only shown if JavaScript is switched off -->
+    <noscript><p class="panel warn">Budget Vault needs JavaScript switched on to work.</p></noscript>
+
+    <h1>Income calculator</h1>
+    <p class="subtitle">Choose how you know your pay. Results update as you type and save automatically.</p>
+
+    <div class="panel">
+      <!-- Switch between the two ways of entering pay -->
+      <div class="toggle">
+        <button type="button" id="modeHourly" class="active">Hourly pay</button>
+        <button type="button" id="modeYearly">Yearly pay</button>
+      </div>
+
+      <!-- Hourly inputs -->
+      <div id="hourlyGroup" class="field-row">
+        <div>
+          <label for="hourly">Hourly rate (£)</label>
+          <input type="number" id="hourly" min="0" step="0.01" inputmode="decimal" placeholder="e.g. 12.50">
+        </div>
+        <div>
+          <label for="hours">Hours per week</label>
+          <input type="number" id="hours" min="0" step="0.5" inputmode="decimal" placeholder="e.g. 40">
+        </div>
+      </div>
+
+      <!-- Yearly input (hidden until you pick "Yearly pay") -->
+      <div id="yearlyGroup" class="field-row" hidden>
+        <div>
+          <label for="yearly">Total pay per year (£)</label>
+          <input type="number" id="yearly" min="0" step="1" inputmode="decimal" placeholder="e.g. 28000">
+        </div>
+      </div>
+
+      <!-- Optional tax -->
+      <div class="field-row">
+        <div>
+          <label for="taxPct">Tax &amp; NI taken off (%) - optional</label>
+          <input type="number" id="taxPct" min="0" max="100" step="0.1" inputmode="decimal" placeholder="0">
+          <p class="muted">Leave at 0 if the pay you entered is already take-home.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Results (filled in by income.js) -->
+    <div class="stat-grid">
+      <div class="stat"><div class="label">Yearly (before tax)</div><div class="value" id="outYearly">£0.00</div></div>
+      <div class="stat"><div class="label">Monthly (before tax)</div><div class="value" id="outMonthly">£0.00</div></div>
+      <div class="stat"><div class="label">Weekly (before tax)</div><div class="value" id="outWeekly">£0.00</div></div>
+      <div class="stat highlight"><div class="label">Monthly take-home (used in budget)</div><div class="value good" id="outTakeHome">£0.00</div></div>
+    </div>
+
+    <!-- "Saved" message (role=status lets screen readers announce it politely) -->
+    <p class="muted" id="savedMsg" role="status" aria-live="polite">&nbsp;</p>
+    <a class="btn" href="budget.html">Go to my budget &rarr;</a>
+  </main>
+
+  <script src="storage.js"></script>
+  <script src="income.js"></script>
+</body>
+</html>

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Security: scripts only from this site + the Chart.js CDN; no plugins, no <base> tricks, no form posts -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src 'self' data:; object-src 'none'; base-uri 'self'; form-action 'none'">
+  <!-- Asks search engines not to list this friends-only tool (delete this line if you want it searchable) -->
+  <meta name="robots" content="noindex">
+  <!-- Colours the browser bar on phones -->
+  <meta name="theme-color" content="#1B2A4A">
+  <title>Budget - Budget Vault</title>
+  <!-- Emoji favicon built inline, so there is no extra file and no 404 -->
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E💷%3C/text%3E%3C/svg%3E">
+  <!-- Shared styles (file sits next to this page) -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Navigation bar (same on every page) -->
+  <header class="topbar">
+    <span class="brand">Budget Vault</span>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="income.html">Income</a>
+      <a href="budget.html" class="active">Budget</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <!-- Only shown if JavaScript is switched off -->
+    <noscript><p class="panel warn">Budget Vault needs JavaScript switched on to work.</p></noscript>
+
+    <h1>My budget</h1>
+    <p class="subtitle">Add boxes for the things you spend on. The pie chart updates as you type.</p>
+
+    <!-- Summary tiles (numbers filled in by budget.js) -->
+    <div class="stat-grid">
+      <div class="stat"><div class="label">Monthly take-home</div><div class="value" id="sumIncome">£0.00</div></div>
+      <div class="stat"><div class="label">Spent each month</div><div class="value" id="sumSpent">£0.00</div></div>
+      <div class="stat"><div class="label" id="leftLabel">Left over</div><div class="value" id="sumLeft">£0.00</div></div>
+    </div>
+
+    <!-- Shown only if no income has been entered yet -->
+    <p class="panel notice" id="incomeHint" hidden>
+      No income set yet. <a href="income.html">Work it out on the Income page</a> to see money left over.
+    </p>
+
+    <!-- Pie chart (role + label so screen readers know what it is) -->
+    <div class="panel">
+      <div class="chart-box" id="chartBox"><canvas id="pie" role="img" aria-label="Pie chart of your monthly spending"></canvas></div>
+      <p class="chart-empty" id="chartEmpty" hidden>Add an amount to a box below and your pie chart will appear here.</p>
+    </div>
+
+    <!-- Swipeable boxes -->
+    <div class="section-head">
+      <h2>Your boxes</h2>
+      <div class="arrows">
+        <button class="btn-secondary" type="button" id="prevBtn" aria-label="Previous box">&larr;</button>
+        <button class="btn-secondary" type="button" id="nextBtn" aria-label="Next box">&rarr;</button>
+      </div>
+    </div>
+    <p class="muted">Swipe sideways (or use the arrows) to move between boxes.</p>
+    <div class="carousel" id="carousel"></div>
+  </main>
+
+  <!-- Chart.js draws the pie chart (must load before budget.js) -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.0"></script>
+  <script src="storage.js"></script>
+  <script src="budget.js"></script>
+</body>
+</html>
