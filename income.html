@@ -32,51 +32,31 @@
     <noscript><p class="panel warn">Budget Vault needs JavaScript switched on to work.</p></noscript>
 
     <h1>Income calculator</h1>
-    <p class="subtitle">Choose how you know your pay. Results update as you type and save automatically.</p>
+    <p class="subtitle">Enter what you take home after tax. Results update as you type and save automatically.</p>
 
     <div class="panel">
-      <!-- Switch between the two ways of entering pay -->
+      <!-- Pick whether you know your weekly or your monthly pay -->
       <div class="toggle">
-        <button type="button" id="modeHourly" class="active">Hourly pay</button>
-        <button type="button" id="modeYearly">Yearly pay</button>
+        <button type="button" id="modeWeekly" class="active">Per week</button>
+        <button type="button" id="modeMonthly">Per month</button>
       </div>
 
-      <!-- Hourly inputs -->
-      <div id="hourlyGroup" class="field-row">
-        <div>
-          <label for="hourly">Hourly rate (£)</label>
-          <input type="number" id="hourly" min="0" step="0.01" inputmode="decimal" placeholder="e.g. 12.50">
-        </div>
-        <div>
-          <label for="hours">Hours per week</label>
-          <input type="number" id="hours" min="0" step="0.5" inputmode="decimal" placeholder="e.g. 40">
-        </div>
-      </div>
-
-      <!-- Yearly input (hidden until you pick "Yearly pay") -->
-      <div id="yearlyGroup" class="field-row" hidden>
-        <div>
-          <label for="yearly">Total pay per year (£)</label>
-          <input type="number" id="yearly" min="0" step="1" inputmode="decimal" placeholder="e.g. 28000">
-        </div>
-      </div>
-
-      <!-- Optional tax -->
+      <!-- One box for the amount (its label and placeholder change with the toggle) -->
       <div class="field-row">
         <div>
-          <label for="taxPct">Tax &amp; NI taken off (%) - optional</label>
-          <input type="number" id="taxPct" min="0" max="100" step="0.1" inputmode="decimal" placeholder="0">
-          <p class="muted">Leave at 0 if the pay you entered is already take-home.</p>
+          <label for="amount" id="amountLabel">Take-home pay per week, after tax (£)</label>
+          <input type="number" id="amount" min="0" step="0.01" inputmode="decimal" placeholder="e.g. 450">
+          <!-- Explains the sum being done (text changes with the toggle) -->
+          <p class="muted" id="howItWorks"></p>
         </div>
       </div>
     </div>
 
     <!-- Results (filled in by income.js) -->
     <div class="stat-grid">
-      <div class="stat"><div class="label">Yearly (before tax)</div><div class="value" id="outYearly">£0.00</div></div>
-      <div class="stat"><div class="label">Monthly (before tax)</div><div class="value" id="outMonthly">£0.00</div></div>
-      <div class="stat"><div class="label">Weekly (before tax)</div><div class="value" id="outWeekly">£0.00</div></div>
-      <div class="stat highlight"><div class="label">Monthly take-home (used in budget)</div><div class="value good" id="outTakeHome">£0.00</div></div>
+      <div class="stat"><div class="label">Weekly (after tax)</div><div class="value" id="outWeekly">£0.00</div></div>
+      <div class="stat highlight"><div class="label">Monthly (used in your budget)</div><div class="value good" id="outMonthly">£0.00</div></div>
+      <div class="stat"><div class="label">Yearly (after tax)</div><div class="value" id="outYearly">£0.00</div></div>
     </div>
 
     <!-- "Saved" message (role=status lets screen readers announce it politely) -->

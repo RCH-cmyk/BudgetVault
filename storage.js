@@ -15,7 +15,7 @@ function newId() {
 // What a brand-new visitor starts with
 function defaultData() {
   return {
-    income: { mode: "hourly", hourly: 0, hours: 0, yearly: 0, taxPct: 0, monthly: 0 },
+    income: { mode: "weekly", amount: 0, monthly: 0 },     // amount = what was typed (per week or per month)
     cards: []
   };
 }
@@ -33,14 +33,14 @@ function cleanData(raw) {
   if (!raw || typeof raw !== "object") return base;        // nothing usable saved
 
   const inc = raw.income || {};                            // saved income section
-  base.income = {
-    mode: inc.mode === "yearly" ? "yearly" : "hourly",     // only two allowed modes
-    hourly: toNum(inc.hourly),
-    hours: toNum(inc.hours),
-    yearly: toNum(inc.yearly),
-    taxPct: Math.min(100, toNum(inc.taxPct)),              // tax can't go over 100%
-    monthly: toNum(inc.monthly)
-  };
+  let mode = inc.mode === "monthly" ? "monthly" : "weekly"; // only two allowed modes
+  let amount = toNum(inc.amount);                          // what was typed last time
+  const monthly = toNum(inc.monthly);                      // monthly take-home (the budget pages read this)
+  if (!amount && monthly) {                                // saved by an older version of the calculator:
+    mode = "monthly";                                      // keep their monthly figure and show it
+    amount = monthly;                                      // in the new monthly box
+  }
+  base.income = { mode: mode, amount: amount, monthly: monthly };
 
   const cards = Array.isArray(raw.cards) ? raw.cards : []; // saved boxes
   base.cards = cards
