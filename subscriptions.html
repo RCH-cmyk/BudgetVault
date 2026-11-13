@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Security: scripts only from this site + the Chart.js CDN; no plugins, no <base> tricks, no form posts -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src 'self' data:; object-src 'none'; base-uri 'self'; form-action 'none'">
+  <!-- Asks search engines not to list this friends-only tool (delete this line if you want it searchable) -->
+  <meta name="robots" content="noindex">
+  <!-- Colours the browser bar on phones -->
+  <meta name="theme-color" content="#1B2A4A">
+  <title>Subscriptions - Budget Vault</title>
+  <!-- Emoji favicon built inline, so there is no extra file and no 404 -->
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E💷%3C/text%3E%3C/svg%3E">
+  <!-- Shared styles (file sits next to this page) -->
+  <link rel="stylesheet" href="style.css">
+  <!-- Styles only this page needs (style.css stays untouched) -->
+  <style>
+    /* One subscription = one white card with a teal edge (grey and faded when paused) */
+    .sub-row { background: var(--card); border-radius: 14px; border-left: 6px solid var(--teal); box-shadow: 0 1px 3px rgba(0, 0, 0, .08); padding: 14px; margin-bottom: 12px; display: grid; gap: 8px; }
+    .sub-row.paused { border-left-color: var(--border); opacity: .65; }
+    /* Same look as the other inputs, plus the dropdown and the date picker */
+    .sub-row input[type="text"], .sub-row input[type="number"], .sub-row input[type="date"], .sub-row select { width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 1rem; background: #fff; color: var(--text); }
+    .sub-row input:focus, .sub-row select:focus { outline: 2px solid var(--teal); border-color: var(--teal); }
+    /* Line 1: name, price, billing cycle */
+    .line1 { display: grid; grid-template-columns: 1fr 110px 130px; gap: 8px; }
+    /* Line 2: category, payment date, active tick */
+    .line2 { display: grid; grid-template-columns: 1fr 1fr auto; gap: 8px; align-items: end; }
+    .s-field small { display: block; color: var(--muted); font-size: .8rem; margin-bottom: 2px; }
+    .active-wrap { display: flex; align-items: center; gap: 6px; font-weight: 600; margin: 0; padding-bottom: 10px; }
+    .sub-row input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--teal); }
+    /* Line 3: the summary sentence + delete button */
+    .line3 { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+    .sub-info { color: var(--muted); font-size: .9rem; }
+    /* "Coming up" list */
+    .upcoming { list-style: none; margin: 0; padding: 0; }
+    .upcoming li { display: flex; justify-content: space-between; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--border); }
+    .upcoming li:last-child { border-bottom: 0; }
+    /* Small phones: name on its own row, everything else in two columns */
+    @media (max-width: 520px) {
+      .line1 { grid-template-columns: 1fr 1fr; }
+      .s-name { grid-column: 1 / -1; }
+      .line2 { grid-template-columns: 1fr 1fr; }
+      .active-wrap { grid-column: 1 / -1; padding-bottom: 0; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation bar (same on every page) -->
+  <header class="topbar">
+    <span class="brand">Budget Vault</span>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="income.html">Income</a>
+      <a href="budget.html">Budget</a>
+      <a href="subscriptions.html" class="active">Subscriptions</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <!-- Only shown if JavaScript is switched off -->
+    <noscript><p class="panel warn">Budget Vault needs JavaScript switched on to work.</p></noscript>
+
+    <h1>Subscription tracker</h1>
+    <p class="subtitle">Type in what you pay for and when it renews. No bank connection: nothing is read from your accounts and nothing leaves this device.</p>
+
+    <!-- Totals (filled in by subscriptions.js) -->
+    <div class="stat-grid">
+      <div class="stat highlight"><div class="label">Monthly total (active)</div><div class="value good" id="sumMonthly">£0.00</div></div>
+      <div class="stat"><div class="label">Yearly total (active)</div><div class="value" id="sumYearly">£0.00</div></div>
+      <div class="stat"><div class="label">Active subscriptions</div><div class="value" id="sumCount">0 of 0</div></div>
+    </div>
+
+    <!-- Payments due in the next 30 days -->
+    <div class="panel">
+      <h2>Coming up (next 30 days)</h2>
+      <ul class="upcoming" id="upcoming"></ul>
+      <p class="muted" id="upcomingEmpty">Nothing due in the next 30 days. Add a payment date to a subscription and it will show here.</p>
+    </div>
+
+    <!-- Monthly cost per category -->
+    <div class="panel" id="catPanel" hidden>
+      <h2>By category (per month)</h2>
+      <div id="categories"></div>
+    </div>
+
+    <!-- The list -->
+    <div class="section-head">
+      <h2>Your subscriptions</h2>
+      <button class="btn" type="button" id="addBtn">+ Add subscription</button>
+    </div>
+    <p class="muted" id="emptyMsg">No subscriptions yet. Click "+ Add subscription" to start.</p>
+    <div id="subList"></div>
+
+    <p class="muted">Tip: for the payment date, use any date you paid on (last or next). The next payment date is worked out for you. Weekly subscriptions are counted as 52 weeks &divide; 12 months. Untick "Active" to pause one without deleting it.</p>
+    <p class="muted">Please don't type bank details, card numbers or passwords into any box.</p>
+
+    <!-- Suggestions for the category box -->
+    <datalist id="catList">
+      <option value="Entertainment"></option>
+      <option value="Music"></option>
+      <option value="Software"></option>
+      <option value="Insurance"></option>
+      <option value="Fitness"></option>
+      <option value="Utilities"></option>
+      <option value="Other"></option>
+    </datalist>
+  </main>
+
+  <script src="storage.js"></script>
+  <script src="subscriptions.js"></script>
+</body>
+</html>

@@ -17,7 +17,7 @@ $("sumLeft").className = "value " + (left < 0 ? "bad" : "good");
 // "Clear all" button: ask first, then wipe our saved data and refresh the page
 $("resetBtn").addEventListener("click", () => {
   if (confirm("Delete everything saved on this device? This can't be undone.")) {
-    try { localStorage.removeItem(STORAGE_KEY); } catch (err) { /* ignore */ }
+    try { localStorage.removeItem(STORAGE_KEY); localStorage.removeItem("budgetVault.subs.v1"); } catch (err) { /* ignore */ }
     location.reload();                                     // reload so the tiles reset to £0.00
   }
 });
