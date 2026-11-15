@@ -5,7 +5,7 @@ const inc = data.income;               // just the income section: { mode, amoun
 
 // Your rule: weekly x 4 = monthly, then monthly x 12 = yearly
 // Change the 4 to 52 / 12 if you want the exact average (about 4.33 weeks in a month)
-const WEEKS_PER_MONTH = 4;
+const WEEKS_PER_MONTH = 52 / 12;
 const MONTHS_PER_YEAR = 12;
 
 // ---- Fill the box with whatever was saved last time ----
@@ -20,12 +20,11 @@ function showMode(mode) {
   if (mode === "weekly") {
     $("amountLabel").textContent = "Take-home pay per week, after tax (\u00A3)";
     $("amount").placeholder = "e.g. 450";
-    $("howItWorks").textContent = "Weekly \u00D7 " + WEEKS_PER_MONTH + " = monthly, then monthly \u00D7 " + MONTHS_PER_YEAR + " = yearly.";
+    $("howItWorks").textContent = "Weekly \u00D7 52 \u00F7 12 = monthly, then monthly \u00D7 " + MONTHS_PER_YEAR + " = yearly.";
   } else {
     $("amountLabel").textContent = "Take-home pay per month, after tax (\u00A3)";
     $("amount").placeholder = "e.g. 1800";
-    $("howItWorks").textContent = "Monthly \u00F7 " + WEEKS_PER_MONTH + " = weekly, and monthly \u00D7 " + MONTHS_PER_YEAR + " = yearly.";
-  }
+    $("howItWorks").textContent = "Monthly \u00D7 12 \u00F7 52 = weekly, and monthly \u00D7 " + MONTHS_PER_YEAR + " = yearly.";  }
   recalc();                                                        // update the numbers
 }
 
